@@ -1,0 +1,31 @@
+language: julia
+
+julia:
+  - nightly
+  - 1.5.3
+
+os:
+  - linux
+
+matrix:
+  allow_failures:
+    - julia: nightly
+
+coveralls: true
+
+branches:
+  only:
+    - master
+
+notifications:
+  email: false
+
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.5.3
+      os: linux
+      script:
+        - julia --color=yes --project=docs/ -e 'using Pkg; Pkg.instantiate()'
+        - julia --color=yes --project=docs/ docs/make.jl
+      after_success: skip
