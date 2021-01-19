@@ -109,7 +109,7 @@ function local_search!(item::Int64,
         j = indexes[j]
         bucketAtual = pop_buckets[j,item]
         bestBucket = bucketAtual
-        for bucketVizinho in 0:totalVizinhos
+        for bucketVizinho in 1:totalVizinhos
             if bucketVizinho != bucketAtual
                 currentObjective = objective_partial(pop_buckets[:,item], 
                                    originalObjective, 

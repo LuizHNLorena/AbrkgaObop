@@ -1,6 +1,6 @@
 using Random, Statistics
 
-function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true)
+function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true,debug=false)
 
     if !isnothing(seed)
         Random.seed!(seed)
@@ -33,7 +33,9 @@ function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true)
             best_solution.id = item
             best_solution.total_time = time() - best_solution.start_time
             best_solution.generation = 0
-            #println("Generation 0 $(pop_fitness[item]) > $(best_solution.objective) $(best_solution.total_time)")
+            if debug
+                println("Generation 0 $(pop_fitness[item]) > $(best_solution.objective) $(best_solution.total_time)")
+            end
             best_solution.objective = pop_fitness[item]
         end
     end
@@ -84,20 +86,24 @@ function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true)
         # ============= #
         for item in 1:parameters.elite_size
             pop_keys_new[:,item] = pop_keys[:,index_order[item]]
-            
+            #pop_fitness[item] = pop_fitness[index_order[item]]
+            #pop_buckets[:,item] = pop_buckets[:,index_order[item]]
+        
             decoder!(item, pop_buckets, pop_keys_new)
             objective!(item, pop_buckets, pop_fitness, instance)
 
             if pop_fitness[item] > best_solution.objective
-                
                 best_solution.id = item
                 best_solution.total_time = time() - best_solution.start_time
                 best_solution.generation = generation
                 best_solution.local_search = false
-                #println("Generation $generation $(pop_fitness[item]) > $(best_solution.objective) $(best_solution.total_time)")
+                if debug
+                    println("Generation 0 $(pop_fitness[item]) > $(best_solution.objective) $(best_solution.total_time)")
+                end
                 best_solution.objective = pop_fitness[item]
             end
-        end
+
+        end 
 
         # ================= #
         # Create offsprings #
@@ -126,8 +132,7 @@ function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true)
                     pop_keys_new[j,item] = pop_keys[j,non_elite_id]    
                 end
             end
-
-             
+  
             decoder!(item, pop_buckets, pop_keys_new)
             objective!(item, pop_buckets, pop_fitness, instance)
 
@@ -136,7 +141,9 @@ function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true)
                 best_solution.total_time = time() - best_solution.start_time
                 best_solution.generation = generation
                 best_solution.local_search = false
-                #println("Generation $generation $(pop_fitness[item]) > $(best_solution.objective) $(best_solution.total_time)")
+                if debug
+                    println("Generation 0 $(pop_fitness[item]) > $(best_solution.objective) $(best_solution.total_time)")
+                end
                 best_solution.objective = pop_fitness[item]
             end
         end
@@ -157,7 +164,9 @@ function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true)
                 best_solution.total_time = time() - best_solution.start_time
                 best_solution.generation = generation
                 best_solution.local_search = false
-                #println("Generation $generation $(pop_fitness[item]) > $(best_solution.objective) $(best_solution.total_time)")
+                if debug
+                    println("Generation 0 $(pop_fitness[item]) > $(best_solution.objective) $(best_solution.total_time)")
+                end
                 best_solution.objective = pop_fitness[item]
             end
         end
