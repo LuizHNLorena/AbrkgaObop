@@ -9,6 +9,6 @@ include("local_search.jl")
 include("abrkga.jl")
 
 export read_dataset
-export execute
+export execute_abrkga
 
 end # module
