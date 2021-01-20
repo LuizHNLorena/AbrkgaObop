@@ -6,7 +6,7 @@ mutable struct OBOPParameters
     mutation_size
     function OBOPParameters(gama::Float64)
         # Max and Min population size
-        population_max::Int64 = 1000
+        population_max::Int64 = 100
         population_min::Int64 = 50
 
         # Stop criterium
