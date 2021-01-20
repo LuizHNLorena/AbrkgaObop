@@ -15,7 +15,7 @@ function execute_abrkga(instance::OBOPDataset;seed::Int64=nothing,local_search=t
     # Initialize parameters
     parameters = OBOPParameters(0.999)
 
-    println("0.1.7")
+    println("0.1.8")
 
     # Extended chromosome size
     chromosome_size_extended = instance.total_itens + 1
@@ -121,7 +121,8 @@ function execute_abrkga(instance::OBOPDataset;seed::Int64=nothing,local_search=t
             elite_id = index_order[elite_id]
 
             # Select an non elite parent
-            non_elite_id = rand(collect(offspring_begin:offspring_end))
+            #non_elite_id = rand(collect(offspring_begin:offspring_end))                # don't include mutants
+            non_elite_id = rand(collect(offspring_begin:parameters.population_size))    # including mutants
             non_elite_id = index_order[non_elite_id]
 
             # Get rhoe value from non elite last key
