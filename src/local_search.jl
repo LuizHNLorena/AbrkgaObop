@@ -48,7 +48,7 @@ function weighted_label_propagation(graph)
         moviments = false
         shuffle!(visit_order)
         for u in visit_order 
-            if size(neighbors(graph,u),1) > 0
+            if size(neighbors(graph, u), 1) > 0
                 fill!(labels_total, 0.0)
                 for v in neighbors(graph, u) 
                     labels_total[labels[v]] += graph.weights[u,v]
@@ -80,6 +80,8 @@ function weighted_label_propagation(graph)
     return index_local_search
 end
 
+
+#= 
 function local_search!(item::Int64,
                        pop_keys::Array{Float64,2},
                        pop_buckets::Array{Int64,2},
@@ -167,7 +169,7 @@ function local_search!(item::Int64,
         best_solution.local_search = false 
     end
 
-    ##=
+    
     # ============================================================= #
     #  Modificar as chaves do individuo respeitando a diferença     #
     #  inicial que ele tinha. Pegar o inicio do bucket que ele foi  #
@@ -178,7 +180,7 @@ function local_search!(item::Int64,
         pop_keys[i,item] = instance.interval_init[pop_buckets[i,item]] + dif[i]
     end
     pop_fitness[item] = bestObjective
-    #==#
+    
 
     # println(pop_buckets[:,item])
     # println(pop_keys[:,item])
@@ -186,6 +188,103 @@ function local_search!(item::Int64,
 
     # println("ok partial LS")
 
+end =#
+
+function local_search!(item::Int64,
+    pop_keys::Array{Float64,2},
+    pop_buckets::Array{Int64,2},
+    pop_fitness::Array{Int64,1},
+    instance::OBOPDataset,
+    best_solution::OBOPSolution,
+    generation::Int64,
+    statistics::OBOPStatistics)
+
+    # Add local search count
+    statistics.total_local_search += 1
+
+    # Index sequence to start the local search
+    indexes = shuffle!(collect(1:instance.total_itens))
+
+    # Create interval between buckets
+    pop_buckets[:,item] = pop_buckets[:,item] * 2
+
+    # =================== #
+    # Inicia refinamento  #
+    # =================== #
+    originalObjective = currentObjective = bestObjective = pop_fitness[item]
+    totalVizinhos = (2 * instance.total_itens) + 1
+    bestBucket = nothing
+
+    for j in 1:instance.total_itens
+        j = indexes[j]
+        bucketAtual = pop_buckets[j,item]
+        bestBucket = bucketAtual
+        for bucketVizinho in 1:totalVizinhos
+            if bucketVizinho != bucketAtual
+                currentObjective = objective_partial(pop_buckets[:,item], 
+                originalObjective, 
+                j, 
+                bucketAtual, 
+                bucketVizinho, 
+                instance)
+                if currentObjective > bestObjective
+                    bestObjective = currentObjective
+                    bestBucket = bucketVizinho
+                end
+            end
+        end
+        if (bestBucket != bucketAtual)
+            pop_buckets[j,item] = bestBucket
+            originalObjective = bestObjective
+        end
+    end
+
+    # ========================================================== #
+    # Reindexa os buckets, pois podem estar em um intervalo > n  #
+    # ========================================================== #
+    z = zeros(Int64, totalVizinhos)
+    id = 1
+    for i in 1:instance.total_itens
+        if z[ pop_buckets[i,item] ] == 0
+            z[ pop_buckets[i,item] ] = id
+            id += 1
+        end  
+    end
+
+    id = 1
+    for i in 1:totalVizinhos
+        if z[i] != 0
+            z[i] = id
+            id += 1
+        end
+    end
+
+    # Checa se é melhor
+    if bestObjective > best_solution.objective
+        statistics.total_local_search_effective += 1
+        best_solution.total_time = time() - best_solution.start_time
+        best_solution.objective = bestObjective
+        for i in 1:instance.total_itens
+            best_solution.bucket[i] = z[pop_buckets[i,item]]   
+        end
+        best_solution.generation = generation
+        best_solution.local_search = false 
+    end
+
+    # ============================================================= #
+    #  Modificar as chaves do individuo respeitando a diferença     #
+    #  inicial que ele tinha. Pegar o inicio do bucket que ele foi  #
+    #  e soma a diferença que ele tinha                             #
+    # ============================================================= #
+    
+    # Calculate the difference between each key and corresponding bucket key start
+    dif = [(pop_keys[i,item] - instance.interval_init[pop_buckets[i,item]]) for i in 1:instance.total_itens]
+
+    for i in 1:instance.total_itens
+        pop_buckets[i,item] = z[pop_buckets[i,item]]
+        pop_keys[i,item] = instance.interval_init[pop_buckets[i,item]] + dif[i]
+    end
+    pop_fitness[item] = bestObjective
 end
 
 function pearson_correlation(X, Y, n)
@@ -221,7 +320,7 @@ function clustering_search(elite_size::Int64,
     sigma = 0.7                 # Used to make graph sparse
     graph = SimpleWeightedGraph(elite_size)
     for i in 1:elite_size - 1
-        for j in i+1:elite_size
+        for j in i + 1:elite_size
             weight = pearson_correlation(pop_keys[:,index_order[i]],
                                               pop_keys[:,index_order[j]],
                                               instance.total_itens)
