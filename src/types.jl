@@ -30,4 +30,6 @@ mutable struct OBOPStatistics
     time_generations::Array{Float64,1}
     time_total::Float64
     time_best::Float64
+    total_local_search::Int64
+    total_local_search_effective::Int64
 end

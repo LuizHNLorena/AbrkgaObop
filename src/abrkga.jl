@@ -57,7 +57,9 @@ function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true,deb
                                 [best_solution.objective],
                                 [time_partial],
                                 time_partial,
-                                best_solution.total_time)
+                                best_solution.total_time,
+                                0,
+                                0)
 
     # Temp population
     pop_keys_new = zeros(chromosome_size_extended, parameters.population_size)
@@ -192,7 +194,8 @@ function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true,deb
                               pop_fitness,
                               instance,
                               best_solution,
-                              generation)
+                              generation,
+                              statistics)
         end
                             
         # ================= #

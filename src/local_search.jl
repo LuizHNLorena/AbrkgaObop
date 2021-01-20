@@ -86,7 +86,11 @@ function local_search!(item::Int64,
                        pop_fitness::Array{Int64,1},
                        instance::OBOPDataset,
                        best_solution::OBOPSolution,
-                       generation::Int64)
+                       generation::Int64,
+                       statistics::OBOPStatistics)
+
+    # Add local search count
+    statistics.total_local_search += 1
 
     # Calculate the difference between each key and corresponding bucket key start
     dif = [(pop_keys[i,item] - instance.interval_init[pop_buckets[i,item]]) for i in 1:instance.total_itens]
@@ -151,6 +155,9 @@ function local_search!(item::Int64,
 
     # Checa se é melhor
     if bestObjective > best_solution.objective
+
+        statistics.total_local_search_effective += 1
+
         best_solution.total_time = time() - best_solution.start_time
         best_solution.objective = bestObjective
         for i in 1:instance.total_itens
@@ -206,7 +213,8 @@ function clustering_search(elite_size::Int64,
                            pop_fitness::Array{Int64,1},
                            instance::OBOPDataset,
                            best_solution::OBOPSolution,
-                           generation::Int64)
+                           generation::Int64,
+                           statistics::OBOPStatistics)
     
     # Create weighted graph
     sigma = 0.7                 # Used to make graph sparse
@@ -232,7 +240,8 @@ function clustering_search(elite_size::Int64,
                       pop_fitness,
                       instance,
                       best_solution,
-                      generation)
+                      generation,
+                      statistics)
     end
 
 end

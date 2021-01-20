@@ -104,12 +104,15 @@ using Random, LightGraphs, SimpleWeightedGraphs
                 0.8333333333333334  0.82;
                 1.0                 0.84]
         fitness = [0,0]
+
+        statistics = AbrkgaObop.OBOPStatistics([],[],[],[],[],[],0.0,0.0,0,0)
+
         AbrkgaObop.decoder!(1,bucket,keys)
         AbrkgaObop.objective!(1,bucket,fitness,instance)
 
         best_solution = AbrkgaObop.OBOPSolution(instance.total_itens,time())
 
-        AbrkgaObop.local_search!(1,keys,bucket,fitness,instance,best_solution,1)
+        AbrkgaObop.local_search!(1,keys,bucket,fitness,instance,best_solution,1,statistics)
 
         @test best_solution.objective == 72
         @test best_solution.bucket == [1,1,1,2,2,3]
@@ -142,7 +145,7 @@ using Random, LightGraphs, SimpleWeightedGraphs
 
         best_solution = AbrkgaObop.OBOPSolution(instance.total_itens,time())
 
-        #AbrkgaObop.local_search!(1,keys,bucket,fitness,instance,best_solution)
+        statistics = AbrkgaObop.OBOPStatistics([],[],[],[],[],[],0.0,0.0,0,0)
 
         AbrkgaObop.clustering_search(2,
                                      [1,2],
@@ -151,7 +154,8 @@ using Random, LightGraphs, SimpleWeightedGraphs
                                      fitness,
                                      instance,
                                      best_solution,
-                                     1)
+                                     1,
+                                     statistics)
         
         @test best_solution.objective == 72
         @test best_solution.bucket == [1,1,1,2,2,3]
