@@ -167,17 +167,18 @@ function local_search!(item::Int64,
         best_solution.local_search = false 
     end
 
-    #= 
+    ##=
     # ============================================================= #
     #  Modificar as chaves do individuo respeitando a diferença     #
     #  inicial que ele tinha. Pegar o inicio do bucket que ele foi  #
     #  e soma a diferença que ele tinha                             #
     # ============================================================= #
     for i in 1:instance.total_itens
-    pop_buckets[i,item] = z[pop_buckets[i,item]]
-    pop_keys[i,item] = instance.interval_init[pop_buckets[i,item]] + dif[i]
+        pop_buckets[i,item] = z[pop_buckets[i,item]]
+        pop_keys[i,item] = instance.interval_init[pop_buckets[i,item]] + dif[i]
     end
-    pop_fitness[item] = bestObjective =#
+    pop_fitness[item] = bestObjective
+    #==#
 
     # println(pop_buckets[:,item])
     # println(pop_keys[:,item])

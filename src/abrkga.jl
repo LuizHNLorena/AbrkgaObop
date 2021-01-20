@@ -15,7 +15,7 @@ function execute_abrkga(instance::OBOPDataset;seed::Int64=nothing,local_search=t
     # Initialize parameters
     parameters = OBOPParameters(0.999)
 
-    println(parameters.population_size)
+    println("ok")
 
     # Extended chromosome size
     chromosome_size_extended = instance.total_itens + 1
