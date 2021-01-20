@@ -202,6 +202,9 @@ function local_search!(item::Int64,
     # Add local search count
     statistics.total_local_search += 1
 
+    # Calculate the difference between each key and corresponding bucket key start
+    dif = [(pop_keys[i,item] - instance.interval_init[pop_buckets[i,item]]) for i in 1:instance.total_itens]
+
     # Index sequence to start the local search
     indexes = shuffle!(collect(1:instance.total_itens))
 
@@ -277,15 +280,13 @@ function local_search!(item::Int64,
     #  e soma a diferença que ele tinha                             #
     # ============================================================= #
     
-    # Calculate the difference between each key and corresponding bucket key start
-    dif = [(pop_keys[i,item] - instance.interval_init[pop_buckets[i,item]]) for i in 1:instance.total_itens]
-
+    
     for i in 1:instance.total_itens
         pop_buckets[i,item] = z[pop_buckets[i,item]]
         pop_keys[i,item] = instance.interval_init[pop_buckets[i,item]] + dif[i]
     end
     pop_fitness[item] = bestObjective
-    
+
 end
 
 function pearson_correlation(X, Y, n)
