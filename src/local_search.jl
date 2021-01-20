@@ -285,6 +285,7 @@ function local_search!(item::Int64,
         pop_keys[i,item] = instance.interval_init[pop_buckets[i,item]] + dif[i]
     end
     pop_fitness[item] = bestObjective
+    
 end
 
 function pearson_correlation(X, Y, n)
