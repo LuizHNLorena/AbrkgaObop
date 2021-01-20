@@ -1,6 +1,6 @@
 using Random, Statistics
 
-function execute(instance::OBOPDataset;seed::Int64=nothing,local_search=true,debug=false)
+function execute_abrkga(instance::OBOPDataset;seed::Int64=nothing,local_search=true,debug=false)
 
     if !isnothing(seed)
         Random.seed!(seed)
