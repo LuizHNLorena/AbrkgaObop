@@ -1,6 +1,6 @@
 using Random, Statistics
 
-function execute_abrkga(instance::OBOPDataset;seed::Int64=nothing,local_search=true,debug=false)
+function execute_abrkga(instance::OBOPDataset;seed::Int64=nothing,local_search=true,debug=false,ls_type=1)
 
     if !isnothing(seed)
         Random.seed!(seed)
@@ -15,7 +15,7 @@ function execute_abrkga(instance::OBOPDataset;seed::Int64=nothing,local_search=t
     # Initialize parameters
     parameters = OBOPParameters(0.999)
 
-    println("0.1.3")
+    println("0.1.6")
 
     # Extended chromosome size
     chromosome_size_extended = instance.total_itens + 1
@@ -197,7 +197,7 @@ function execute_abrkga(instance::OBOPDataset;seed::Int64=nothing,local_search=t
                               instance,
                               best_solution,
                               generation,
-                              statistics)
+                              statistics,ls_type)
         end
                             
         # ================= #

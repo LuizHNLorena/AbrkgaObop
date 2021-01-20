@@ -80,8 +80,6 @@ function weighted_label_propagation(graph)
     return index_local_search
 end
 
-
-#= 
 function local_search!(item::Int64,
                        pop_keys::Array{Float64,2},
                        pop_buckets::Array{Int64,2},
@@ -188,9 +186,9 @@ function local_search!(item::Int64,
 
     # println("ok partial LS")
 
-end =#
+end 
 
-function local_search!(item::Int64,
+function local_search_random!(item::Int64,
     pop_keys::Array{Float64,2},
     pop_buckets::Array{Int64,2},
     pop_fitness::Array{Int64,1},
@@ -316,7 +314,8 @@ function clustering_search(elite_size::Int64,
                            instance::OBOPDataset,
                            best_solution::OBOPSolution,
                            generation::Int64,
-                           statistics::OBOPStatistics)
+                           statistics::OBOPStatistics,
+                           ls_type)
     
     # Create weighted graph
     sigma = 0.7                 # Used to make graph sparse
@@ -335,7 +334,18 @@ function clustering_search(elite_size::Int64,
     # Return the index of the chromosomes that the LS will be applied
     index_local_search = weighted_label_propagation(graph)
     
+    ls = [local_search!,local_search_random!]
+
     for item in index_local_search
+        ls[ls_type](index_order[item],
+        pop_keys,
+        pop_buckets,
+        pop_fitness,
+        instance,
+        best_solution,
+        generation,
+        statistics)
+        #=
         local_search!(index_order[item],
                       pop_keys,
                       pop_buckets,
@@ -344,6 +354,7 @@ function clustering_search(elite_size::Int64,
                       best_solution,
                       generation,
                       statistics)
+        =#
     end
 
 end
