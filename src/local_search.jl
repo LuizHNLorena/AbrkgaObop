@@ -327,7 +327,7 @@ function local_search_parallel!(item::Int64,
         
         neighbor_objective[bucketAtual] = bestObjective
 
-        Threads.@thread for bucketVizinho in 1:totalVizinhos
+        Threads.@threads for bucketVizinho in 1:totalVizinhos
             if bucketVizinho != bucketAtual
                 neighbor_objective[bucketVizinho] = objective_partial(pop_buckets[:,item], 
                                                                       originalObjective, 
