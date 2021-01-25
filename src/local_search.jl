@@ -443,7 +443,7 @@ function clustering_search(elite_size::Int64,
     # Return the index of the chromosomes that the LS will be applied
     index_local_search = weighted_label_propagation(graph)
     
-    ls = [local_search!,local_search_random!]
+    ls = [local_search!,local_search_random!,local_search_parallel!]
 
     for item in index_local_search
         ls[ls_type](index_order[item],

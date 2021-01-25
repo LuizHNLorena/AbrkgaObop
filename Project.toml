@@ -1,7 +1,7 @@
 name = "AbrkgaObop"
 uuid = "e4782ac2-4e16-4aef-a112-3645be88bc29"
 authors = ["Luiz Henrique Nogueira Lorena <luiz-lorena@hotmail.com>"]
-version = "0.1.12"
+version = "0.1.13"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
