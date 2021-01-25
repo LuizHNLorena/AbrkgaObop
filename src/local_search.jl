@@ -127,6 +127,7 @@ function local_search!(item::Int64,
                 end
             end
         end
+        
         if (bestBucket != bucketAtual)
             pop_buckets[j,item] = bestBucket
             originalObjective = bestObjective
@@ -287,6 +288,114 @@ function local_search_random!(item::Int64,
 
 end
 
+function local_search_parallel!(item::Int64,
+    pop_keys::Array{Float64,2},
+    pop_buckets::Array{Int64,2},
+    pop_fitness::Array{Int64,1},
+    instance::OBOPDataset,
+    best_solution::OBOPSolution,
+    generation::Int64,
+    statistics::OBOPStatistics)
+
+    # Add local search count
+    statistics.total_local_search += 1
+
+    # Calculate the difference between each key and corresponding bucket key start
+    dif = [(pop_keys[i,item] - instance.interval_init[pop_buckets[i,item]]) for i in 1:instance.total_itens]
+
+    # Index sequence to start the local search
+    indexes = sortperm(dif)
+
+    # Create interval between buckets
+    # bucket = 2 * bucket
+    pop_buckets[:,item] = pop_buckets[:,item] * 2
+
+    # =================== #
+    # Inicia refinamento  #
+    # =================== #
+    originalObjective = currentObjective = bestObjective = pop_fitness[item]
+    totalVizinhos = (2 * instance.total_itens) + 1
+    bestBucket = nothing
+
+    neighbor_objective = zeros(totalVizinhos)
+
+    for j in 1:instance.total_itens
+        
+        j = indexes[j]
+        bucketAtual = pop_buckets[j,item]
+        bestBucket = bucketAtual
+        
+        neighbor_objective[bucketAtual] = bestObjective
+
+        Threads.@thread for bucketVizinho in 1:totalVizinhos
+            if bucketVizinho != bucketAtual
+                neighbor_objective[bucketVizinho] = objective_partial(pop_buckets[:,item], 
+                                                                      originalObjective, 
+                                                                      j, 
+                                                                      bucketAtual, 
+                                                                      bucketVizinho, 
+                                                                      instance)
+            end
+        end
+
+        bestBucket = argmax(neighbor_objective)
+
+        if (bestBucket != bucketAtual)
+            pop_buckets[j,item] = bestBucket
+            originalObjective = neighbor_objective[bestBucket]
+        end
+        
+    end
+
+    # ========================================================== #
+    # Reindexa os buckets, pois podem estar em um intervalo > n  #
+    # ========================================================== #
+    z = zeros(Int64, totalVizinhos)
+    id = 1
+    for i in 1:instance.total_itens
+        if z[ pop_buckets[i,item] ] == 0
+            z[ pop_buckets[i,item] ] = id
+            id += 1
+        end  
+    end
+
+    id = 1
+    for i in 1:totalVizinhos
+        if z[i] != 0
+            z[i] = id
+            id += 1
+        end
+    end
+
+    # Checa se é melhor
+    if bestObjective > best_solution.objective
+
+        statistics.total_local_search_effective += 1
+
+        best_solution.total_time = time() - best_solution.start_time
+        best_solution.objective = bestObjective
+        for i in 1:instance.total_itens
+            best_solution.bucket[i] = z[pop_buckets[i,item]]   
+        end
+        best_solution.generation = generation
+        best_solution.local_search = false 
+    end
+
+
+    # ============================================================= #
+    #  Modificar as chaves do individuo respeitando a diferença     #
+    #  inicial que ele tinha. Pegar o inicio do bucket que ele foi  #
+    #  e soma a diferença que ele tinha                             #
+    # ============================================================= #
+    for i in 1:instance.total_itens
+        pop_buckets[i,item] = z[pop_buckets[i,item]]
+        pop_keys[i,item] = instance.interval_init[pop_buckets[i,item]] + dif[i]
+    end
+    pop_fitness[item] = bestObjective
+
+end 
+
+
 function pearson_correlation(X, Y, n)
     correlation::Float64 = 0.0
     sumXY::Float64 = 0.0
@@ -345,7 +454,7 @@ function clustering_search(elite_size::Int64,
         best_solution,
         generation,
         statistics)
-        #=
+        #= 
         local_search!(index_order[item],
                       pop_keys,
                       pop_buckets,
@@ -353,8 +462,7 @@ function clustering_search(elite_size::Int64,
                       instance,
                       best_solution,
                       generation,
-                      statistics)
-        =#
+                      statistics) =#
     end
 
 end
