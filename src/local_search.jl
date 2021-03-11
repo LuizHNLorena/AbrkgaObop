@@ -250,8 +250,15 @@ function local_search_vnd!(item::Int64,
     fo_best = pop_fitness[item]  
     vizinho = 1
     while vizinho <= 2
+
+        println("##################")
+        println("Neighbor: $vizinho")
+        println("$fo_best $(pop_buckets[:,item])")
+        
         fo = f[vizinho](pop_buckets[:,item], fo_best, instance)
-        println("$fo_best -> $fo")
+        
+        println("$fo $(pop_buckets[:,item])")
+
         if fo > fo_best
             fo_best = fo
             vizinho = 1
