@@ -237,8 +237,7 @@ function local_search_vnd!(item::Int64,
     instance::OBOPDataset,
     best_solution::OBOPSolution,
     generation::Int64,
-    statistics::OBOPStatistics,
-    ls_type::Int64)
+    statistics::OBOPStatistics)
 
     # Calculate the difference between each key and corresponding bucket key start
     dif = [(pop_keys[i,item] - instance.interval_init[pop_buckets[i,item]]) for i in 1:instance.total_itens]
