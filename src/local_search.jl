@@ -246,19 +246,11 @@ function local_search_vnd!(item::Int64,
     # Add local search count
     statistics.total_local_search += 1
 
-    neighbors = 0
-    f = nothing
-    if ls_type == 1
-        f = [neighbor_swap, neighbor_insertion]
-        neighbors = 2
-    else
-        f = [neighbor_insertion]
-        neighbors = 1
-    end
+    f = [neighbor_swap, neighbor_insertion]
 
     fo_best = pop_fitness[item]  
     neighbor = 1
-    while neighbor <= neighbors
+    while neighbor <= 2
         fo = f[neighbor](pop_buckets[:,item], fo_best, instance)
         if fo > fo_best
             fo_best = fo
@@ -300,8 +292,7 @@ function clustering_search_new(elite_size::Int64,
     instance::OBOPDataset,
     best_solution::OBOPSolution,
     generation::Int64,
-    statistics::OBOPStatistics,
-    ls_type)
+    statistics::OBOPStatistics)
 
     # Create weighted graph
     sigma = 0.7                 # Used to make graph sparse
@@ -330,8 +321,7 @@ function clustering_search_new(elite_size::Int64,
                     instance,
                     best_solution,
                     generation,
-                    statistics,
-                    ls_type)
+                    statistics)
     end
 
 end

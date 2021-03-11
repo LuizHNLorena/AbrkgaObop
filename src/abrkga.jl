@@ -426,8 +426,7 @@ function execute_abrkga_vnd(instance::OBOPDataset;seed::Int64=nothing,local_sear
                               instance,
                               best_solution,
                               generation,
-                              statistics,
-                              ls_type)
+                              statistics)
         end
                             
         # ================= #
