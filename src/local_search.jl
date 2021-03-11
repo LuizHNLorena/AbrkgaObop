@@ -246,16 +246,19 @@ function local_search_vnd!(item::Int64,
     # Add local search count
     statistics.total_local_search += 1
 
+    neighbors = 0
     f = nothing
     if ls_type == 1
         f = [neighbor_swap, neighbor_insertion]
+        neighbors = 2
     else
         f = [neighbor_insertion]
+        neighbors = 1
     end
 
     fo_best = pop_fitness[item]  
     neighbor = 1
-    while neighbor <= length(f)
+    while neighbor <= neighbors
         fo = f[neighbor](pop_buckets[:,item], fo_best, instance)
         if fo > fo_best
             fo_best = fo
