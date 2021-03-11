@@ -248,6 +248,7 @@ function local_search_vnd!(item::Int64,
     f = [neighbor_swap, neighbor_insertion]
 
     fo_best = pop_fitness[item]  
+
     vizinho = 1
     while vizinho <= 2
 
@@ -255,7 +256,8 @@ function local_search_vnd!(item::Int64,
         println("Neighbor: $vizinho")
         println("$fo_best $(pop_buckets[:,item])")
         
-        fo = f[vizinho](pop_buckets[:,item], fo_best, instance)
+        #fo = f[vizinho](pop_buckets[:,item], fo_best, instance)
+        fo = f[vizinho](view(pop_buckets,:,item), fo_best, instance)
         
         println("$fo $(pop_buckets[:,item])")
 
