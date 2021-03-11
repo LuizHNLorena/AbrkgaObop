@@ -459,7 +459,7 @@ function execute_abrkga_vnd(instance::OBOPDataset;seed::Int64=nothing,local_sear
         push!(statistics.time_generations, time_partial)
         
         # Stop if elite std is low
-        if statistics.elite_std < 0.0001
+        if statistics.elite_std[end] < 0.0001
             break
         end        
 
