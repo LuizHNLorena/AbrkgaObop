@@ -418,17 +418,6 @@ function execute_abrkga_vnd(instance::OBOPDataset;seed::Int64=nothing,local_sear
         # Local search #
         # ============ #
         if local_search
-            #=
-            clustering_search(parameters.elite_size,
-                              index_order,
-                              pop_keys,
-                              pop_buckets,
-                              pop_fitness,
-                              instance,
-                              best_solution,
-                              generation,
-                              statistics,ls_type)
-                              =#
             clustering_search_new(parameters.elite_size,
                               index_order,
                               pop_keys,
@@ -437,7 +426,8 @@ function execute_abrkga_vnd(instance::OBOPDataset;seed::Int64=nothing,local_sear
                               instance,
                               best_solution,
                               generation,
-                              statistics,ls_type)
+                              statistics,
+                              ls_type)
         end
                             
         # ================= #

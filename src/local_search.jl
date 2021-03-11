@@ -237,7 +237,8 @@ function local_search_vnd!(item::Int64,
     instance::OBOPDataset,
     best_solution::OBOPSolution,
     generation::Int64,
-    statistics::OBOPStatistics)
+    statistics::OBOPStatistics,
+    ls_type::Int64)
 
     # Calculate the difference between each key and corresponding bucket key start
     dif = [(pop_keys[i,item] - instance.interval_init[pop_buckets[i,item]]) for i in 1:instance.total_itens]
@@ -245,11 +246,16 @@ function local_search_vnd!(item::Int64,
     # Add local search count
     statistics.total_local_search += 1
 
-    f = [neighbor_swap, neighbor_insertion]
-    
+    f = nothing
+    if ls_type == 1
+        f = [neighbor_swap, neighbor_insertion]
+    else
+        f = [neighbor_insertion]
+    end
+
     fo_best = pop_fitness[item]  
     neighbor = 1
-    while neighbor <= 2
+    while neighbor <= length(f)
         fo = f[neighbor](pop_buckets[:,item], fo_best, instance)
         if fo > fo_best
             fo_best = fo
@@ -311,17 +317,18 @@ function clustering_search_new(elite_size::Int64,
     # Return the index of the chromosomes that the LS will be applied
     index_local_search = weighted_label_propagation(graph)
 
-    ls = [local_search!,local_search_random!,local_search_parallel!]
+    #ls = [local_search!,local_search_random!,local_search_parallel!]
 
     for item in index_local_search
-        ls[ls_type](index_order[item],
+        local_search_vnd!(index_order[item],
                     pop_keys,
                     pop_buckets,
                     pop_fitness,
                     instance,
                     best_solution,
                     generation,
-                    statistics)
+                    statistics,
+                    ls_type)
     end
 
 end
