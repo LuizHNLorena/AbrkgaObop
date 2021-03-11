@@ -251,6 +251,7 @@ function local_search_vnd!(item::Int64,
     neighbor = 1
     while neighbor <= 2
         fo = f[neighbor](pop_buckets[:,item], fo_best, instance)
+        println("$fo_best -> $fo")
         if fo > fo_best
             fo_best = fo
             neighbor = 1
