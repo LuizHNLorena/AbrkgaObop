@@ -300,6 +300,8 @@ function execute_abrkga_vnd(instance::OBOPDataset;seed::Int64=nothing,local_sear
     offspring_begin = offspring_end = 0
     inicio_mutante = fim_mutante = 0
 
+    return best_solution.objective, create_bucket_order(best_solution.bucket), statistics
+
     # ========= #
     # Main loop #
     # ========= #
