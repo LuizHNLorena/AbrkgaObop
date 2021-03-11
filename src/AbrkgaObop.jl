@@ -10,5 +10,6 @@ include("abrkga.jl")
 
 export read_dataset
 export execute_abrkga
+export execute_abrkga_vnd
 
 end # module

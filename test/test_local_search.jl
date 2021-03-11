@@ -119,6 +119,41 @@ using Random, LightGraphs, SimpleWeightedGraphs
 
     end
 
+    @testset "Testing local_search_parallel" begin
+
+        Random.seed!(0)
+
+        instance = read_dataset("datasets/movie.toi")
+
+        bucket = [0 0;
+                  0 0;
+                  0 0;
+                  0 0;
+                  0 0;
+                  0 0]
+        keys = [0.16666666666666666 0.159;
+                0.3333333333333333  0.32;
+                0.5                 0.49;
+                0.6666666666666666  0.65; 
+                0.8333333333333334  0.82;
+                1.0                 0.84]
+        fitness = [0,0]
+
+        statistics = AbrkgaObop.OBOPStatistics([],[],[],[],[],[],0.0,0.0,0,0)
+
+        AbrkgaObop.decoder!(1,bucket,keys)
+        AbrkgaObop.objective!(1,bucket,fitness,instance)
+
+        best_solution = AbrkgaObop.OBOPSolution(instance.total_itens,time())
+
+        AbrkgaObop.local_search_parallel!(1,keys,bucket,fitness,instance,best_solution,1,statistics)
+
+        @test best_solution.objective == 72
+        @test best_solution.bucket == [1,1,1,2,2,3]
+
+    end
+
+    #=
     @testset "Testing clustering_search" begin
 
         Random.seed!(0)
@@ -161,5 +196,6 @@ using Random, LightGraphs, SimpleWeightedGraphs
         @test best_solution.bucket == [1,1,1,2,2,3]
         
     end
+    =#
 
 end
