@@ -252,14 +252,14 @@ function local_search_vnd!(item::Int64,
     vizinho = 1
     while vizinho <= 2
 
-        println("##################")
-        println("Neighbor: $vizinho")
-        println("$fo_best $(pop_buckets[:,item])")
+        #println("##################")
+        #println("Neighbor: $vizinho")
+        #println("$fo_best $(pop_buckets[:,item])")
         
         #fo = f[vizinho](pop_buckets[:,item], fo_best, instance)
         fo = f[vizinho](view(pop_buckets,:,item), fo_best, instance)
         
-        println("$fo $(pop_buckets[:,item])")
+        #println("$fo $(pop_buckets[:,item])")
 
         if fo > fo_best
             fo_best = fo
@@ -268,8 +268,6 @@ function local_search_vnd!(item::Int64,
             vizinho += 1
         end
     end
-
-    println("PASSOU")
 
     # Checa se é melhor
     if fo_best > best_solution.objective
