@@ -259,6 +259,8 @@ function local_search_vnd!(item::Int64,
         end
     end
 
+    println("PASSOU")
+
     # Checa se é melhor
     if fo_best > best_solution.objective
         statistics.total_local_search_effective += 1
